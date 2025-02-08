@@ -1,4 +1,4 @@
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
 import { useLocalization } from "./useLocalization";
 import type { WikiArticle } from "../components/WikiCard";
 
@@ -15,10 +15,10 @@ export function useWikiArticles() {
   const [articles, setArticles] = useState<WikiArticle[]>([]);
   const [loading, setLoading] = useState(false);
   const [buffer, setBuffer] = useState<WikiArticle[]>([]);
-  const {currentLanguage} = useLocalization()
+  const { currentLanguage } = useLocalization();
 
-  const fetchArticles = async (forBuffer = false) => {
-    if (loading) return;
+  const fetchArticles = useCallback(async (forBuffer = false) => {
+      // useCallback now depends on currentLanguage
     setLoading(true);
     try {
       const response = await fetch(
@@ -43,7 +43,7 @@ export function useWikiArticles() {
 
       const data = await response.json();
       const newArticles = Object.values(data.query.pages)
-        .map((page: any): WikiArticle  => ({
+        .map((page: any): WikiArticle => ({
           title: page.title,
           extract: page.extract,
           pageid: page.pageid,
@@ -51,9 +51,9 @@ export function useWikiArticles() {
           url: page.canonicalurl,
         }))
         .filter((article) => article.thumbnail
-                             && article.thumbnail.source
-                             && article.url
-                             && article.extract);
+                           && article.thumbnail.source
+                           && article.url
+                           && article.extract);
 
       await Promise.allSettled(
         newArticles
@@ -65,23 +65,31 @@ export function useWikiArticles() {
         setBuffer(newArticles);
       } else {
         setArticles((prev) => [...prev, ...newArticles]);
-        fetchArticles(true);
+        //fetchArticles(true); // Remove this recursive call here
       }
     } catch (error) {
       console.error("Error fetching articles:", error);
     }
     setLoading(false);
-  };
+  }, [currentLanguage]); // fetchArticles now depends on currentLanguage
 
   const getMoreArticles = useCallback(() => {
     if (buffer.length > 0) {
       setArticles((prev) => [...prev, ...buffer]);
       setBuffer([]);
-      fetchArticles(true);
+      fetchArticles(true); // Now calls the *correct* fetchArticles
     } else {
       fetchArticles(false);
     }
-  }, [buffer]);
+  }, [buffer, fetchArticles]); // getMoreArticles depends on fetchArticles
+
+  // Use useEffect to trigger the initial fetch and refetch on language change
+  useEffect(() => {
+    setArticles([]); // Clear existing articles when the language changes
+    setBuffer([]);    // Clear the buffer too
+    fetchArticles(false); // Initial fetch
+    // No need for a cleanup function; React handles this with the dependency array
+  }, [fetchArticles]); // useEffect depends on fetchArticles (which depends on currentLanguage)
 
   return { articles, loading, fetchArticles: getMoreArticles };
 }
