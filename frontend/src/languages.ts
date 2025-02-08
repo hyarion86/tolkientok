@@ -10,7 +10,7 @@ export const LANGUAGES = [
     id: "de",
     name: "Deutsch",
     flag: "https://hatscripts.github.io/circle-flags/flags/de.svg",
-    api: "https://www.ardapedia.org/w/api.php?",
+    api: "https://lotr.fandom.com/fr/api.php?",
     article: "https://www.ardapedia.org/wiki/",
   },
   {
@@ -19,5 +19,12 @@ export const LANGUAGES = [
     flag: "https://hatscripts.github.io/circle-flags/flags/fi.svg",
     api: "https://kontu.wiki/w/api.php?",
     article: "https://kontu.wiki/",
+  },
+    {
+    id: "fr",
+    name: "Français",
+    flag: "https://hatscripts.github.io/circle-flags/flags/fr.svg",
+    api: "https://lotr.fandom.com/fr/w/api.php?",
+    article: "https://lotr.fandom.com/fr/wiki/",
   },
 ];
