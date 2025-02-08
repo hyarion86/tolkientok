@@ -72,7 +72,7 @@ function App() {
           onClick={() => window.location.reload()}
           className="text-2xl font-bold text-white drop-shadow-lg hover:opacity-80 transition-opacity"
         >
-          WikiTok
+          TolkienTok
         </button>
       </div>
 
@@ -101,12 +101,12 @@ function App() {
             >
               ✕
             </button>
-            <h2 className="text-xl font-bold mb-4">About WikiTok</h2>
+            <h2 className="text-xl font-bold mb-4">About TolkienTok</h2>
             <p className="mb-4">
               A TikTok-style interface for exploring random Tolkien Gateway articles.
             </p>
             <p className="text-white/70">
-              Made with ❤️ by{' '}
+              Original by{' '}
               <a
                 href="https://x.com/Aizkmusic"
                 target="_blank"
