@@ -103,7 +103,7 @@ function App() {
             </button>
             <h2 className="text-xl font-bold mb-4">About WikiTok</h2>
             <p className="mb-4">
-              A TikTok-style interface for exploring random Wikipedia articles.
+              A TikTok-style interface for exploring random Tolkien Gateway articles.
             </p>
             <p className="text-white/70">
               Made with ❤️ by{' '}
