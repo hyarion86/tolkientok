@@ -80,3 +80,4 @@ export function useWikiArticles() {
   }, [buffer]);
 
   return { articles, loading, fetchArticles: getMoreArticles };
+}
