@@ -1,6 +1,6 @@
-# WikiTok
+# TolkienTok
 
-A TikTok-style interface for exploring random Wikipedia articles in multiple languages.
+A TikTok-style interface for exploring random Tolkien Gateway articles in multiple languages.
 
 ## Features
 
@@ -40,7 +40,7 @@ No backend required!
 
 ## Demo
 
-Check it out here at [wikitok.vercel.app](https://wikitok.vercel.app)
+Check it out here at [tolkientok.vercel.app](https://tolkientok.vercel.app)
 
 ## Contributing
 
