@@ -81,13 +81,14 @@ export function useWikiArticles() {
   };
 
   const getMoreArticles = useCallback(() => {
+    if (loading) return; // Prevent fetching while already loading
     if (buffer.length > 0) {
       setArticles((prev) => [...prev, ...buffer]);
       setBuffer([]);
     } else {
       fetchArticles();
     }
-  }, [buffer]);
+  }, [buffer, loading]);
 
   return { articles, loading, fetchArticles: getMoreArticles };
 }
