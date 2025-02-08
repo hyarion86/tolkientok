@@ -36,7 +36,7 @@ export function useWikiArticles() {
             exsentences: "5",
             explaintext: "1",
             piprop: "thumbnail",
-            pithumbsize: "800",
+            pithumbsize: "400",
             origin: "*",
           })
       );
