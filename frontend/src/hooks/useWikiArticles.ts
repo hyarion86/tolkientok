@@ -40,7 +40,16 @@ export function useWikiArticles() {
         })}`
       );
 
+      if (!response.ok) {
+        throw new Error(`Error fetching articles: ${response.statusText}`);
+      }
+
       const data = await response.json();
+
+      if (!data.query) {
+        throw new Error("No query in response");
+      }
+
       const newArticles = Object.values(data.query.pages)
         .map((page: any): WikiArticle => ({
           title: page.title,
@@ -63,11 +72,12 @@ export function useWikiArticles() {
           .map((article) => preloadImage(article.thumbnail!.source))
       );
 
-      setBuffer(newArticles);
+      setBuffer((prev) => [...prev, ...newArticles]);
     } catch (error) {
       console.error("Error fetching articles:", error);
+    } finally {
+      setLoading(false);
     }
-    setLoading(false);
   };
 
   const getMoreArticles = useCallback(() => {
