@@ -37,7 +37,7 @@ export function useWikiArticles() {
             explaintext: "1",
             piprop: "thumbnail",
             pithumbsize: "800",
-            origin: "tolkientok.com",
+            origin: "*",
           })
       );
 
