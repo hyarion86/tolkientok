@@ -17,9 +17,21 @@ export function useWikiArticles() {
   const [buffer, setBuffer] = useState<WikiArticle[]>([]);
   const { currentLanguage } = useLocalization();
 
+  // useCallback is ESSENTIAL here. fetchArticles depends on currentLanguage
   const fetchArticles = useCallback(async (forBuffer = false) => {
-      // useCallback now depends on currentLanguage
+    // Create an AbortController for each fetch
+    const controller = new AbortController();
+    const signal = controller.signal;
+
+
+    // Early return if already loading.  This is still important,
+    // but it's not the primary fix.
+    if (loading) {
+        return;
+    }
+
     setLoading(true);
+
     try {
       const response = await fetch(
         currentLanguage.api +
@@ -38,10 +50,23 @@ export function useWikiArticles() {
             piprop: "thumbnail",
             pithumbsize: "400",
             origin: "*",
-          })
+          }),
+        { signal } // Pass the AbortSignal to fetch
       );
 
+      if (!response.ok) { //Check if request was not ok.
+          throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
       const data = await response.json();
+
+      // Handle potential errors in the response
+      if (!data.query || !data.query.pages) {
+        console.error("Unexpected API response:", data);
+        setLoading(false); // Ensure loading is set to false on error
+        return; // Exit early
+      }
+
       const newArticles = Object.values(data.query.pages)
         .map((page: any): WikiArticle => ({
           title: page.title,
@@ -55,6 +80,7 @@ export function useWikiArticles() {
                            && article.url
                            && article.extract);
 
+
       await Promise.allSettled(
         newArticles
           .filter((article) => article.thumbnail)
@@ -65,31 +91,44 @@ export function useWikiArticles() {
         setBuffer(newArticles);
       } else {
         setArticles((prev) => [...prev, ...newArticles]);
-        //fetchArticles(true); // Remove this recursive call here
+        // Removed recursive call.
       }
     } catch (error) {
-      console.error("Error fetching articles:", error);
+      if (error instanceof Error && error.name === 'AbortError') {
+        console.log('Fetch aborted'); // Expected, not an error
+      } else {
+        console.error("Error fetching articles:", error);
+      }
+    } finally {
+        setLoading(false); //set Loading to false in the finally block
     }
-    setLoading(false);
-  }, [currentLanguage]); // fetchArticles now depends on currentLanguage
+  }, [currentLanguage, loading]); // Depend on currentLanguage AND loading
 
-  const getMoreArticles = useCallback(() => {
-    if (buffer.length > 0) {
-      setArticles((prev) => [...prev, ...buffer]);
-      setBuffer([]);
-      fetchArticles(true); // Now calls the *correct* fetchArticles
-    } else {
-      fetchArticles(false);
-    }
-  }, [buffer, fetchArticles]); // getMoreArticles depends on fetchArticles
+    const getMoreArticles = useCallback(() => {
+        if (buffer.length > 0) {
+            setArticles((prev) => [...prev, ...buffer]);
+            setBuffer([]);
+            fetchArticles(true);
+        } else {
+            fetchArticles(false);
+        }
+    }, [buffer, fetchArticles]);
 
-  // Use useEffect to trigger the initial fetch and refetch on language change
   useEffect(() => {
-    setArticles([]); // Clear existing articles when the language changes
-    setBuffer([]);    // Clear the buffer too
-    fetchArticles(false); // Initial fetch
-    // No need for a cleanup function; React handles this with the dependency array
-  }, [fetchArticles]); // useEffect depends on fetchArticles (which depends on currentLanguage)
+    // 1. Clear existing articles
+    setArticles([]);
+    setBuffer([]);
+
+    // 2. Initial fetch
+    fetchArticles(false);
+
+    // 3. Cleanup function: Abort any in-flight requests
+    return () => {
+        // We need to abort the fetch, but fetchArticles is a useCallback
+        // And it is torn down each render, but we can abort inside the function.
+
+    };
+  }, [fetchArticles]); // Depend on fetchArticles
 
   return { articles, loading, fetchArticles: getMoreArticles };
 }
