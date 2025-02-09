@@ -10,8 +10,8 @@ export const LANGUAGES = [
     id: "de",
     name: "Deutsch",
     flag: "https://hatscripts.github.io/circle-flags/flags/de.svg",
-    api: "https://de.wikipedia.org/w/api.php?",
-    article: "https://de.wikipedia.org/wiki/",
+    api: "https://www.ardapedia.org/w/api.php?",
+    article: "https://www.ardapedia.org/wiki/",
   },
   {
     id: "fr",
