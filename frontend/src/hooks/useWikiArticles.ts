@@ -1,4 +1,4 @@
-import { useState, useCallback, useEffect } from "react";
+import { useState, useCallback } from "react";
 import { useLocalization } from "./useLocalization";
 import type { WikiArticle } from "../components/WikiCard";
 
@@ -15,23 +15,11 @@ export function useWikiArticles() {
   const [articles, setArticles] = useState<WikiArticle[]>([]);
   const [loading, setLoading] = useState(false);
   const [buffer, setBuffer] = useState<WikiArticle[]>([]);
-  const { currentLanguage } = useLocalization();
+  const {currentLanguage} = useLocalization()
 
-  // useCallback is ESSENTIAL here. fetchArticles depends on currentLanguage
-  const fetchArticles = useCallback(async (forBuffer = false) => {
-    // Create an AbortController for each fetch
-    const controller = new AbortController();
-    const signal = controller.signal;
-
-
-    // Early return if already loading.  This is still important,
-    // but it's not the primary fix.
-    if (loading) {
-        return;
-    }
-
+  const fetchArticles = async (forBuffer = false) => {
+    if (loading) return;
     setLoading(true);
-
     try {
       const response = await fetch(
         currentLanguage.api +
@@ -50,25 +38,12 @@ export function useWikiArticles() {
             piprop: "thumbnail",
             pithumbsize: "400",
             origin: "*",
-          }),
-        { signal } // Pass the AbortSignal to fetch
+          })
       );
 
-      if (!response.ok) { //Check if request was not ok.
-          throw new Error(`HTTP error! status: ${response.status}`);
-      }
-
       const data = await response.json();
-
-      // Handle potential errors in the response
-      if (!data.query || !data.query.pages) {
-        console.error("Unexpected API response:", data);
-        setLoading(false); // Ensure loading is set to false on error
-        return; // Exit early
-      }
-
       const newArticles = Object.values(data.query.pages)
-        .map((page: any): WikiArticle => ({
+        .map((page: any): WikiArticle  => ({
           title: page.title,
           extract: page.extract,
           pageid: page.pageid,
@@ -76,10 +51,9 @@ export function useWikiArticles() {
           url: page.canonicalurl,
         }))
         .filter((article) => article.thumbnail
-                           && article.thumbnail.source
-                           && article.url
-                           && article.extract);
-
+                             && article.thumbnail.source
+                             && article.url
+                             && article.extract);
 
       await Promise.allSettled(
         newArticles
@@ -91,44 +65,23 @@ export function useWikiArticles() {
         setBuffer(newArticles);
       } else {
         setArticles((prev) => [...prev, ...newArticles]);
-        // Removed recursive call.
+        fetchArticles(true);
       }
     } catch (error) {
-      if (error instanceof Error && error.name === 'AbortError') {
-        console.log('Fetch aborted'); // Expected, not an error
-      } else {
-        console.error("Error fetching articles:", error);
-      }
-    } finally {
-        setLoading(false); //set Loading to false in the finally block
+      console.error("Error fetching articles:", error);
     }
-  }, [currentLanguage, loading]); // Depend on currentLanguage AND loading
+    setLoading(false);
+  };
 
-    const getMoreArticles = useCallback(() => {
-        if (buffer.length > 0) {
-            setArticles((prev) => [...prev, ...buffer]);
-            setBuffer([]);
-            fetchArticles(true);
-        } else {
-            fetchArticles(false);
-        }
-    }, [buffer, fetchArticles]);
-
-  useEffect(() => {
-    // 1. Clear existing articles
-    setArticles([]);
-    setBuffer([]);
-
-    // 2. Initial fetch
-    fetchArticles(false);
-
-    // 3. Cleanup function: Abort any in-flight requests
-    return () => {
-        // We need to abort the fetch, but fetchArticles is a useCallback
-        // And it is torn down each render, but we can abort inside the function.
-
-    };
-  }, [fetchArticles]); // Depend on fetchArticles
+  const getMoreArticles = useCallback(() => {
+    if (buffer.length > 0) {
+      setArticles((prev) => [...prev, ...buffer]);
+      setBuffer([]);
+      fetchArticles(true);
+    } else {
+      fetchArticles(false);
+    }
+  }, [buffer]);
 
   return { articles, loading, fetchArticles: getMoreArticles };
 }
