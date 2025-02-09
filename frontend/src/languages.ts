@@ -6,6 +6,13 @@ export const LANGUAGES = [
     api: "https://tolkiengateway.net/w/api.php?",
     article: "https://tolkiengateway.net/wiki/",
   },
+    {
+    id: "fi",
+    name: "Suomi",
+    flag: "https://hatscripts.github.io/circle-flags/flags/fi.svg",
+    api: "https://kontu.wiki/w/api.php?",
+    article: "https://kontu.wiki/",
+  },
   {
     id: "br",
     name: "Português do Brasil",
