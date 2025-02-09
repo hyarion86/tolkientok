@@ -10,8 +10,8 @@ export const LANGUAGES = [
     id: "de",
     name: "Deutsch",
     flag: "https://hatscripts.github.io/circle-flags/flags/de.svg",
-    api: "https://www.ardapedia.org/w/api.php?",
-    article: "https://www.ardapedia.org/wiki/",
+    api: "https://lotr.fandom.com/fr/api.php?",
+    article: "https://lotr.fandom.com/fr/wiki/",
   },
   {
     id: "fr",
