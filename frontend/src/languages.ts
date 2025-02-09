@@ -27,6 +27,7 @@ export const LANGUAGES = [
     api: "https://lotr.su/w/api.php?",
     article: "https://lotr.su/wiki/",
   },
+  {
     id: "zh",
     name: "中文",
     flag: "https://hatscripts.github.io/circle-flags/flags/zh.svg",
