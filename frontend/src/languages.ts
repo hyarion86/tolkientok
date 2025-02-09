@@ -13,4 +13,11 @@ export const LANGUAGES = [
     api: "https://compendiumtolkien.com.br/api.php?",
     article: "https://compendiumtolkien.com.br/wiki/",
   },
+  {
+    id: "ru",
+    name: "Русский",
+    flag: "https://hatscripts.github.io/circle-flags/flags/ru.svg",
+    api: "https://lotr.su/w/api.php?",
+    article: "https://lotr.su/wiki/",
+  },
 ];
