@@ -3,8 +3,8 @@ export const LANGUAGES = [
     id: "en",
     name: "English",
     flag: "https://hatscripts.github.io/circle-flags/flags/us.svg",
-    api: "https://tolkiengateway.net/w/api.php?",
-    article: "https://tolkiengateway.net/wiki/",
+    api: "https://www.ardapedia.org/w/api.php?",
+    article: "https://www.ardapedia.org/wiki/",
   },
   {
     id: "de",
