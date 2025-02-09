@@ -30,7 +30,7 @@ export const LANGUAGES = [
   {
     id: "zh",
     name: "中文",
-    flag: "https://hatscripts.github.io/circle-flags/flags/zh.svg",
+    flag: "https://hatscripts.github.io/circle-flags/flags/cn.svg",
     api: "https://lotr.huijiwiki.com/api.php?",
     article: "https://lotr.huijiwiki.com/wiki/",
   },
