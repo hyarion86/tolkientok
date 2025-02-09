@@ -49,11 +49,11 @@ export const LANGUAGES = [
     article: "https://ru.wikipedia.org/wiki/",
   },
   {
-    id: "zh",
-    name: "中文",
+    id: "fi",
+    name: "Suomi",
     flag: "https://hatscripts.github.io/circle-flags/flags/cn.svg",
-    api: "https://zh.wikipedia.org/w/api.php?",
-    article: "https://zh.wikipedia.org/wiki/",
+    api: "https://kontu.wiki/w/api.php?",
+    article: "https://kontu.wiki/",
   },
   {
     id: "ja",
